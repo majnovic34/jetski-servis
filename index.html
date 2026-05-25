@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jetski Servis</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Courier New', monospace;
+      background: #f0f4ff;
+      color: #1a2a5e;
+      min-height: 100vh;
+      max-width: 480px;
+      margin: 0 auto;
+      padding-bottom: 80px;
+    }
+    header {
+      background: linear-gradient(135deg, #1a5cff 0%, #3a8fff 100%);
+      border-bottom: 2px solid #0a3acc;
+      padding: 16px 20px 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 { font-size: 22px; color: #fff; letter-spacing: 2px; }
+    header p { font-size: 12px; color: #c0d8ff; margin-top: 2px; letter-spacing: 3px; }
+    .worker-bar {
+      display: flex;
+      gap: 8px;
+      padding: 10px 20px;
+      background: #dce6ff;
+      border-bottom: 1px solid #b0c4f0;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .worker-label { font-size: 12px; color: #5a7abf; letter-spacing: 1px; }
+    .worker-name { font-size: 12px; color: #1a5cff; font-weight: bold; letter-spacing: 1px; }
+    .btn-small {
+      background: none;
+      border: 1px solid #7a9adf;
+      color: #1a5cff;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: inherit;
+      letter-spacing: 1px;
+    }
+    .btn-small.muted { color: #8a9abf; border-color: #b0bfdf; }
+    .ml-auto { margin-left: auto; }
+    section { padding: 16px 20px 0; }
+    .section-title {
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: #5a7abf;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #c0d0f0;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px #1a5cff11;
+    }
+    .card:active { border-color: #1a5cff; box-shadow: 0 4px 16px #1a5cff22; }
+    .card-title { font-size: 17px; font-weight: bold; color: #1a2a5e; margin-bottom: 2px; }
+    .badge {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #e8f0ff;
+      color: #1a5cff;
+      border-radius: 12px;
+      padding: 3px 10px;
+      font-size: 12px;
+      border: 1px solid #b0c8ff;
+    }
+    .fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a5cff, #3a8fff);
+      border: none;
+      color: #fff;
+      font-size: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px #1a5cff55;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    input, textarea {
+      background: #fff;
+      border: 1px solid #b0c4f0;
+      border-radius: 8px;
+      color: #1a2a5e;
+      padding: 12px 14px;
+      font-size: 16px;
+      width: 100%;
+      font-family: inherit;
+      margin-bottom: 10px;
+      outline: none;
+    }
+    input:focus, textarea:focus { border-color: #1a5cff; }
+    textarea { min-height: 90px; resize: vertical; }
+    .btn {
+      background: #1a5cff;
+      border: none;
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-family: inherit;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .btn.danger { background: #cc2a2a; }
+    .btn.success { background: #1a9e4a; }
+    .back-btn {
+      background: none;
+      border: none;
+      color: #1a5cff;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: inherit;
+      padding: 0;
+      margin-bottom: 14px;
+      display: block;
+    }
+    .log-item {
+      background: #fff;
+      border: 1px solid #c0d0f0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 4px #1a5cff0a;
+    }
+    .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .log-worker { font-size: 12px; color: #1a5cff; letter-spacing: 1px; font-weight: bold; }
+    .log-date { font-size: 11px; color: #8a9abf; margin-left: 10px; }
+    .log-text { font-size: 15px; color: #2a3a6e; line-height: 1.5; }
+    .delete-btn { background: none; border: none; color: #cc2a2a; cursor: pointer; font-size: 16px; padding: 0; opacity: 0.5; }
+    .empty { text-align: center; color: #8a9abf; font-size: 14px; padding: 40px 20px; letter-spacing: 1px; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .worker-select-card {
+      background: #fff;
+      border: 1.5px solid #c0d0f0;
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px #1a5cff11;
+    }
+    .worker-select-card:active { border-color: #1a5cff; }
+    .worker-emoji { font-size: 32px; margin-bottom: 8px; }
+    .worker-select-name { font-size: 20px; font-weight: bold; color: #1a2a5e; }
+    .flex-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .log-actions { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .divider { border: none; border-top: 1px solid #dce6ff; margin: 16px 0; }
+    .naplaceno-section {
+      background: #f0fff6;
+      border: 1px solid #80e0a0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+    }
+    .naplaceno-title { font-size: 12px; color: #1a7a40; letter-spacing: 2px; margin-bottom: 10px; }
+    .loading-screen { display: flex; align-items: center; justify-content: center; height: 100vh; color: #1a5cff; letter-spacing: 3px; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="screen-loading" class="loading-screen">UČITAVANJE...</div>
+
+<!-- WORKER SELECTION -->
+<div id="screen-worker" class="screen">
+  <header>
+    <h1>⚡ JETSKI SERVIS</h1>
+    <p>UPRAVLJANJE RADOVIMA</p>
+  </header>
+  <section style="padding-top:40px">
+    <div class="section-title" style="text-align:center;margin-bottom:30px">TKO SI TI?</div>
+    <div class="worker-select-card" onclick="selectWorker('Luka')">
+      <div class="worker-emoji">👨‍💼</div>
+      <div class="worker-select-name">Luka</div>
+    </div>
+    <div class="worker-select-card" onclick="selectWorker('Maki')">
+      <div class="worker-emoji">🔧</div>
+      <div class="worker-select-name">Maki</div>
+    </div>
+    <div class="worker-select-card" onclick="selectWorker('Marin')">
+      <div class="worker-emoji">🔩</div>
+      <div class="worker-select-name">Marin</div>
+    </div>
+  </section>
+</div>
+
+<!-- MAIN LIST -->
+<div id="screen-list" class="screen">
+  <header>
+    <h1>⚡ JETSKI SERVIS</h1>
+    <p>UPRAVLJANJE RADOVIMA</p>
+  </header>
+  <div class="worker-bar">
+    <span class="worker-label">PRIJAVLJEN:</span>
+    <span class="worker-name" id="list-worker-name"></span>
+    <button class="btn-small ml-auto" onclick="refreshList()">OSVJEŽI</button>
+    <button class="btn-small muted" onclick="logout()">ODJAVA</button>
+  </div>
+  <section>
+    <div class="section-title" id="list-count">AKTIVNI JETSKIJI (0)</div>
+    <div id="jetski-list"></div>
+  </section>
+  <button class="fab" onclick="showScreen('add-jetski')">+</button>
+</div>
+
+<!-- ADD JETSKI -->
+<div id="screen-add-jetski" class="screen">
+  <header>
+    <h1>⚡ JETSKI SERVIS</h1>
+    <p>DODAJ NOVI JETSKI</p>
+  </header>
+  <section>
+    <button class="back-btn" onclick="showScreen('list')">← Natrag</button>
+    <div class="section-title">PODACI JETSKIJA</div>
+    <input id="new-model" type="text" placeholder="Model (npr. Sea-Doo GTI 130)" />
+    <button class="btn" onclick="addJetski()">DODAJ JETSKI</button>
+  </section>
+</div>
+
+<!-- JETSKI DETAIL -->
+<div id="screen-jetski" class="screen">
+  <header>
+    <h1 id="detail-title">⚡ JETSKI</h1>
+    <p>DETALJI SERVISA</p>
+  </header>
+  <div class="worker-bar">
+    <span class="worker-label">PRIJAVLJEN:</span>
+    <span class="worker-name" id="detail-worker-name"></span>
+  </div>
+  <section>
+    <button class="back-btn" onclick="goBack()">← Natrag na popis</button>
+
+    <div class="section-title">NOVI ZAPIS RADA</div>
+    <textarea id="log-text" placeholder="Opiši što je rađeno na jetskiju..."></textarea>
+    <div class="flex-row">
+      <button class="btn" onclick="addLog()">SPREMI ZAPIS</button>
+    </div>
+
+    <hr class="divider">
+
+    <div class="naplaceno-section" id="naplata-section" style="display:none">
+      <div class="naplaceno-title">✅ ZAVRŠI SERVIS</div>
+      <button class="btn success" onclick="naplaceno()">NAPLAĆENO — OBRIŠI JETSKI</button>
+    </div>
+
+    <hr class="divider">
+
+    <div class="log-actions">
+      <div class="section-title" id="logs-count">POVIJEST RADOVA (0)</div>
+      <button class="btn-small" onclick="refreshLogs()">OSVJEŽI</button>
+    </div>
+    <div id="logs-list"></div>
+  </section>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getFirestore, collection, doc, addDoc, getDocs,
+    deleteDoc, query, orderBy, onSnapshot, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA7RE3hN7VsQ6OBQHbargBgHsIMv3HEOhU",
+    authDomain: "jetski-servis.firebaseapp.com",
+    projectId: "jetski-servis",
+    storageBucket: "jetski-servis.firebasestorage.app",
+    messagingSenderId: "189071308777",
+    appId: "1:189071308777:web:d778822a68d485d89b3d78"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  let currentWorker = null;
+  let currentJetskiId = null;
+  let logsUnsub = null;
+
+  function formatDate(ts) {
+    if (!ts) return '';
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleDateString('hr-HR', {day:'2-digit',month:'2-digit',year:'numeric'})
+      + ' ' + d.toLocaleTimeString('hr-HR', {hour:'2-digit',minute:'2-digit'});
+  }
+
+  window.showScreen = function(name) {
+    document.getElementById('screen-loading').style.display = 'none';
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById('screen-' + name);
+    if (el) el.classList.add('active');
+  }
+
+  window.selectWorker = function(w) {
+    currentWorker = w;
+    document.getElementById('list-worker-name').textContent = w;
+    document.getElementById('detail-worker-name').textContent = w;
+    showScreen('list');
+    refreshList();
+  }
+
+  window.logout = function() {
+    currentWorker = null;
+    if (logsUnsub) logsUnsub();
+    showScreen('worker');
+  }
+
+  window.goBack = function() {
+    if (logsUnsub) { logsUnsub(); logsUnsub = null; }
+    showScreen('list');
+    refreshList();
+  }
+
+  window.refreshList = async function() {
+    const q = query(collection(db, 'jetskis'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    const list = document.getElementById('jetski-list');
+    list.innerHTML = '';
+    let count = 0;
+    snap.forEach(docSnap => {
+      count++;
+      const j = docSnap.data();
+      const id = docSnap.id;
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `<div class="card-title">${j.model}</div><div class="badge" id="badge-${id}">...</div>`;
+      card.onclick = () => openJetski(id, j.model);
+      list.appendChild(card);
+      getDocs(collection(db, 'jetskis', id, 'logs')).then(ls => {
+        const b = document.getElementById('badge-' + id);
+        if (b) b.textContent = ls.size + ' zapisa';
+      });
+    });
+    document.getElementById('list-count').textContent = `AKTIVNI JETSKIJI (${count})`;
+    if (count === 0) list.innerHTML = '<div class="empty">Nema jetskija.<br>Dodaj prvi klikom na +</div>';
+  }
+
+  window.addJetski = async function() {
+    const model = document.getElementById('new-model').value.trim();
+    if (!model) return;
+    await addDoc(collection(db, 'jetskis'), { model, createdAt: serverTimestamp() });
+    document.getElementById('new-model').value = '';
+    showScreen('list');
+    refreshList();
+  }
+
+  window.openJetski = function(id, model) {
+    currentJetskiId = id;
+    document.getElementById('detail-title').textContent = '⚡ ' + model.toUpperCase();
+    document.getElementById('log-text').value = '';
+    document.getElementById('naplata-section').style.display = currentWorker === 'Luka' ? 'block' : 'none';
+    showScreen('jetski');
+    loadLogs();
+  }
+
+  window.loadLogs = function() {
+    if (logsUnsub) logsUnsub();
+    const q = query(collection(db, 'jetskis', currentJetskiId, 'logs'), orderBy('date', 'desc'));
+    logsUnsub = onSnapshot(q, snap => {
+      const list = document.getElementById('logs-list');
+      list.innerHTML = '';
+      document.getElementById('logs-count').textContent = `POVIJEST RADOVA (${snap.size})`;
+      if (snap.empty) {
+        list.innerHTML = '<div class="empty">Nema zapisa za ovaj jetski.</div>';
+        return;
+      }
+      snap.forEach(docSnap => {
+        const l = docSnap.data();
+        const canDelete = currentWorker === 'Luka' || l.worker === currentWorker;
+        const div = document.createElement('div');
+        div.className = 'log-item';
+        div.innerHTML = `
+          <div class="log-header">
+            <div>
+              <span class="log-worker">${l.worker}</span>
+              <span class="log-date">${formatDate(l.date)}</span>
+            </div>
+            ${canDelete ? `<button class="delete-btn" onclick="deleteLog('${docSnap.id}')">✕</button>` : ''}
+          </div>
+          <div class="log-text">${l.text}</div>
+        `;
+        list.appendChild(div);
+      });
+    });
+  }
+
+  window.refreshLogs = window.loadLogs;
+
+  window.addLog = async function() {
+    const text = document.getElementById('log-text').value.trim();
+    if (!text || !currentJetskiId || !currentWorker) return;
+    await addDoc(collection(db, 'jetskis', currentJetskiId, 'logs'), {
+      text, worker: currentWorker, date: serverTimestamp()
+    });
+    document.getElementById('log-text').value = '';
+  }
+
+  window.deleteLog = async function(logId) {
+    if (!confirm('Obrisati ovaj zapis?')) return;
+    await deleteDoc(doc(db, 'jetskis', currentJetskiId, 'logs', logId));
+  }
+
+  window.naplaceno = async function() {
+    if (!confirm('Servis naplaćen? Ovo će obrisati jetski i sve zapise.')) return;
+    const logsSnap = await getDocs(collection(db, 'jetskis', currentJetskiId, 'logs'));
+    for (const l of logsSnap.docs) {
+      await deleteDoc(doc(db, 'jetskis', currentJetskiId, 'logs', l.id));
+    }
+    await deleteDoc(doc(db, 'jetskis', currentJetskiId));
+    if (logsUnsub) { logsUnsub(); logsUnsub = null; }
+    showScreen('list');
+    refreshList();
+  }
+
+  // Init
+  document.getElementById('screen-loading').style.display = 'none';
+  showScreen('worker');
+</script>
+</body>
+</html>
